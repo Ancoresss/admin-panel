@@ -1,0 +1,19 @@
+.main {
+    display: flex;
+    justify-content: center;
+}
+.main-form {
+    width: 35%;
+    margin-top: 10%;
+}
+.main-form button {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.main-form h2 {
+    text-align: center;
+}
+.form-group {
+    margin-bottom: 15px;
+}

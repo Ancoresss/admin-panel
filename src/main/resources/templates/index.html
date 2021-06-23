@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Main page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="main">
+            <form th:method="POST" th:action="@{/new-client}" th:object="${client}" class="main-form">
+                <h2>Заполните форму</h2>
+                <div class="form-group">
+                    <label for="fio">ФИО</label>
+                    <input type="text" class="form-control" id="fio" minlength="2" th:field="*{fullName}" placeholder="Введите ФИО">
+                </div>
+                <div class="form-group">
+                    <label for="address">Адрес</label>
+                    <input type="text" class="form-control" id="address" minlength="2" th:field="*{address}" placeholder="Введите адрес">
+                </div>
+                <div class="form-group">
+                    <label for="email">Почта</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="Введите почту">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Телефон</label>
+                    <input type="text" class="form-control" id="phone" th:field="*{phone}" pattern="^\+7(\d{10})$" placeholder="Введите телефон">
+                </div>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
