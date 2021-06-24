@@ -8,7 +8,7 @@ import javax.persistence.Id;
 public class Client {
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private String fullName;
     private String address;
     private String email;
@@ -25,11 +25,11 @@ public class Client {
     public Client() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
