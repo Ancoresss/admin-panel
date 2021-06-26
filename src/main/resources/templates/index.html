@@ -17,6 +17,19 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
+                <h5 class="card-title text-uppercase mb-0">Сгенерировать ссылку</h5>
+                <div class="link-gen"><span th:text="${generatedLink}"></span></div>
+                <form method="POST" action="/link/generate">
+                    <button type="submit" class="btn btn-primary">Сгенерировать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
                 <h5 class="card-title text-uppercase mb-0">Информация о людях</h5>
             </div>
             <div class="table-responsive">
@@ -62,48 +75,6 @@
     </div>
 </div>
 </div>
-
-<style type="text/css">
-body{
-    background: #edf1f5;
-    margin-top:20px;
-}
-.card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 0 solid transparent;
-    border-radius: 0;
-}
-.btn-circle.btn-lg, .btn-group-lg>.btn-circle.btn {
-    width: 50px;
-    height: 50px;
-    padding: 14px 15px;
-    font-size: 18px;
-    line-height: 23px;
-}
-.text-muted {
-    color: #8898aa!important;
-}
-[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
-    cursor: pointer;
-}
-.btn-circle {
-    border-radius: 100%;
-    width: 40px;
-    height: 40px;
-    padding: 10px;
-}
-.user-table tbody tr .category-select {
-    max-width: 150px;
-    border-radius: 20px;
-}
-
-</style>
 
 <script type="text/javascript">
 

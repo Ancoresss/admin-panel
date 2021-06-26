@@ -1,18 +1,20 @@
 package com.adpanel.adpanel.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Client {
     @Id
+    @Column(name = "id")
     @GeneratedValue
     private long id;
     private String fullName;
     private String address;
     private String email;
     private String phone;
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "link_id", referencedColumnName = "id")
+    private Link link;
 
     public Client(int id, String fullName, String address, String email, String phone) {
         this.id = id;
@@ -63,5 +65,13 @@ public class Client {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Link getLink() {
+        return link;
+    }
+
+    public void setLink(Link link) {
+        this.link = link;
     }
 }
