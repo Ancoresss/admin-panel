@@ -19,9 +19,12 @@
             <div class="card-body">
                 <h5 class="card-title text-uppercase mb-0">Сгенерировать ссылку</h5>
                 <div class="link-gen"><span th:text="${generatedLink}"></span></div>
-                <form method="POST" action="/link/generate">
-                    <button type="submit" class="btn btn-primary">Сгенерировать</button>
-                </form>
+                <div class="d-flex justify-content-between">
+                    <form method="POST" action="/link/generate">
+                        <button type="submit" class="btn btn-primary">Сгенерировать</button>
+                    </form>
+                    <a href="/new-user"><button type="button" class="btn btn-dark">Добавить нового юзера</button></a>
+                </div>
             </div>
         </div>
     </div>

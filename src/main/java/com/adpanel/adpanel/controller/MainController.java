@@ -3,9 +3,14 @@ package com.adpanel.adpanel.controller;
 import com.adpanel.adpanel.logic.LinkGenerator;
 import com.adpanel.adpanel.model.Client;
 import com.adpanel.adpanel.model.Link;
+import com.adpanel.adpanel.model.Role;
+import com.adpanel.adpanel.model.User;
 import com.adpanel.adpanel.service.ClientService;
 import com.adpanel.adpanel.service.LinkService;
+import com.adpanel.adpanel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +18,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class MainController {
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
     private ClientService clientService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private LinkService linkService;
     private LinkGenerator lg = new LinkGenerator();
@@ -28,6 +39,7 @@ public class MainController {
     private String editedClientLink;
 
     @GetMapping("/")
+    @PreAuthorize("hasAuthority('developers:read')")
     public String main(Model model) {
         List<Client> clients = clientService.getClients();
         String generatedLinkView;
@@ -49,6 +61,7 @@ public class MainController {
             link = null;
         }
         if(link == null) {
+            model.addAttribute("errorMessage", "This link is invalid!");
             return "error-page";
         } else {
             selectedLink = formLink;
@@ -57,6 +70,7 @@ public class MainController {
         }
     }
     @PostMapping("/link/generate")
+    @PreAuthorize("hasAuthority('developers:write')")
     public String linkGenerator() {
         generatedLink = new Link(lg.generateLink());
         linkService.addLink(generatedLink);
@@ -85,6 +99,27 @@ public class MainController {
     public String newClient(@ModelAttribute("client") Client client) {
         client.setLink(linkService.getLink(selectedLink));
         clientService.addClient(client);
+        return "redirect:/"; //тут потрібно повернути статичну сторінку
+    }
+    @GetMapping("/new-user")
+    @PreAuthorize("hasAuthority('developers:write')")
+    public String newUserPage(Model model) {
+        model.addAttribute("newUser", new User());
+        return "form-add-user";
+    }
+    @PostMapping("/new-user")
+    @PreAuthorize("hasAuthority('developers:write')")
+    public String newUser(@ModelAttribute("newUser") User user, Model model) {
+        Optional<User> userCheck = userService.getUser(user.getName());
+        if(userCheck.isPresent()) {
+            model.addAttribute("errorMessage", "User already exist!");
+            return "error-page";
+        } else {
+            user.setRole(Role.USER);
+            String encodePass = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodePass);
+            userService.addUser(user);
+        }
         return "redirect:/";
     }
     @PostMapping("/delete/{id}")
