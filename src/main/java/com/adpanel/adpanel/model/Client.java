@@ -15,6 +15,8 @@ public class Client {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "link_id", referencedColumnName = "id")
     private Link link;
+    @Enumerated(value = EnumType.STRING)
+    private Status status;
 
     public Client(int id, String fullName, String address, String email, String phone) {
         this.id = id;
@@ -73,5 +75,13 @@ public class Client {
 
     public void setLink(Link link) {
         this.link = link;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

@@ -1,10 +1,7 @@
 package com.adpanel.adpanel.controller;
 
 import com.adpanel.adpanel.logic.LinkGenerator;
-import com.adpanel.adpanel.model.Client;
-import com.adpanel.adpanel.model.Link;
-import com.adpanel.adpanel.model.Role;
-import com.adpanel.adpanel.model.User;
+import com.adpanel.adpanel.model.*;
 import com.adpanel.adpanel.service.ClientService;
 import com.adpanel.adpanel.service.LinkService;
 import com.adpanel.adpanel.service.UserService;
@@ -13,14 +10,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.html.Option;
+import java.io.File;
+import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class MainController {
@@ -40,8 +38,9 @@ public class MainController {
 
     @GetMapping("/")
     @PreAuthorize("hasAuthority('developers:read')")
-    public String main(Model model) {
+    public String main(Model model, Principal principal) {
         List<Client> clients = clientService.getClients();
+        Optional<User> optionalUser = userService.getUser(principal.getName());
         String generatedLinkView;
         model.addAttribute("clients", clients);
         try {
@@ -50,6 +49,7 @@ public class MainController {
             generatedLinkView = "Здесь сгенерируется ссылка";
         }
         model.addAttribute("generatedLink", generatedLinkView);
+        optionalUser.ifPresent(user -> model.addAttribute("currentUser", user));
         return "index";
     }
     @GetMapping("/link/{form-link}")
@@ -70,7 +70,7 @@ public class MainController {
         }
     }
     @PostMapping("/link/generate")
-    @PreAuthorize("hasAuthority('developers:write')")
+    @PreAuthorize("hasAuthority('developers:generate:link')")
     public String linkGenerator() {
         generatedLink = new Link(lg.generateLink());
         linkService.addLink(generatedLink);
@@ -84,7 +84,7 @@ public class MainController {
         return "edit-form";
     }
     @PostMapping("/edit/{id}")
-    public String edit(@ModelAttribute("client") Client client) {
+    public String edit(@ModelAttribute("client") Client client, @RequestParam String status) {
         Client editedClient = new Client();
         editedClient.setId(client.getId());
         editedClient.setAddress(client.getAddress());
@@ -92,30 +92,57 @@ public class MainController {
         editedClient.setFullName(client.getFullName());
         editedClient.setPhone(client.getPhone());
         editedClient.setLink(linkService.getLink(editedClientLink));
+        switch (status) {
+            case "ACCEPTED":
+                editedClient.setStatus(Status.ACCEPTED);
+                break;
+            case "REJECTED":
+                editedClient.setStatus(Status.REJECTED);
+                break;
+            case "PENDING":
+                editedClient.setStatus(Status.PENDING);
+                break;
+        }
         clientService.addClient(editedClient);
         return "redirect:/";
     }
     @PostMapping("/new-client")
-    public String newClient(@ModelAttribute("client") Client client) {
+    public String newClient(@RequestParam("file") MultipartFile file, @ModelAttribute("client") Client client) throws IOException {
         client.setLink(linkService.getLink(selectedLink));
+        client.setStatus(Status.PENDING);
+        if (file != null) {
+            File uploadFile = new File("/home/psavk/uploadFileTest");
+
+            if(!uploadFile.exists()) {
+                uploadFile.mkdir();
+            }
+
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+            file.transferTo(new File("/home/psavk/uploadFileTest"));
+        }
         clientService.addClient(client);
         return "redirect:/"; //тут потрібно повернути статичну сторінку
     }
     @GetMapping("/new-user")
-    @PreAuthorize("hasAuthority('developers:write')")
+    @PreAuthorize("hasAuthority('developers:create:user')")
     public String newUserPage(Model model) {
         model.addAttribute("newUser", new User());
         return "form-add-user";
     }
     @PostMapping("/new-user")
-    @PreAuthorize("hasAuthority('developers:write')")
-    public String newUser(@ModelAttribute("newUser") User user, Model model) {
+    @PreAuthorize("hasAuthority('developers:create:user')")
+    public String newUser(@RequestParam(required = false) Optional<String> isSubAdmin, @ModelAttribute("newUser") User user, Model model) {
         Optional<User> userCheck = userService.getUser(user.getName());
         if(userCheck.isPresent()) {
             model.addAttribute("errorMessage", "User already exist!");
             return "error-page";
         } else {
-            user.setRole(Role.USER);
+            if(isSubAdmin.isPresent()) {
+                user.setRole(Role.SUB_ADMIN);
+            } else {
+                user.setRole(Role.USER);
+            }
             String encodePass = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodePass);
             userService.addUser(user);

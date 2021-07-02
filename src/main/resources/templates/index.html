@@ -15,7 +15,9 @@
 <div class="container">
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
+        <div class="d-flex justify-content-end"><a href="/logout" class="btn btn-info">Выйти</a></div>
+        <div class="card" th:if="${currentUser.getRoles().toString() == 'ADMIN' ||
+                                   currentUser.getRoles().toString() == 'SUB_ADMIN'}">
             <div class="card-body">
                 <h5 class="card-title text-uppercase mb-0">Сгенерировать ссылку</h5>
                 <div class="link-gen"><span th:text="${generatedLink}"></span></div>
@@ -23,7 +25,9 @@
                     <form method="POST" action="/link/generate">
                         <button type="submit" class="btn btn-primary">Сгенерировать</button>
                     </form>
-                    <a href="/new-user"><button type="button" class="btn btn-dark">Добавить нового юзера</button></a>
+                    <a href="/new-user" th:if="${currentUser.getRoles().toString() == 'ADMIN'}">
+                        <button type="button" class="btn btn-dark">Добавить нового юзера</button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -61,6 +65,13 @@
                       </td>
                       <td>
                           <span class="text-muted" th:text="${client.getPhone()}"></span>
+                      </td>
+                      <td>
+                          <span class="text-muted"
+                                th:text="${client.getStatus().getTranslate()}"
+                                th:class="${(client.getStatus().toString() == 'ACCEPTED' ? 'text-success' : '') +
+                                (client.getStatus().toString() == 'REJECTED' ? 'text-danger' : '') +
+                                (client.getStatus().toString() == 'PENDING' ? 'text-warning' : '')}"></span>
                       </td>
                       <td>
                           <div class="form-btn">

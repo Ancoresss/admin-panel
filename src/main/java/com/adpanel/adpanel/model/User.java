@@ -16,6 +16,10 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role")
     private Role roles;
+    @Transient
+    private String isSubAdmin;
+    @Transient
+    private String fileName;
 
     public User() {
     }
@@ -56,5 +60,21 @@ public class User {
 
     public void setRole(Role role) {
         this.roles = role;
+    }
+
+    public String isSubAdmin() {
+        return isSubAdmin;
+    }
+
+    public void setSubAdmin(String subAdmin) {
+        isSubAdmin = subAdmin;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

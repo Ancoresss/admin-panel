@@ -34,6 +34,13 @@
                 <label for="phone">Телефон</label>
                 <input type="text" class="form-control" id="phone" th:field="*{phone}" pattern="^\+7(\d{10})$" placeholder="Введите телефон">
             </div>
+            <div class="form-group">
+                <select name="status" id="status">
+                    <option value="ACCEPTED">Принято</option>
+                    <option value="REJECTED">Отказано</option>
+                    <option selected value="PENDING">В ожидании</option>
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary">Редактировать</button>
         </form>
     </div>
