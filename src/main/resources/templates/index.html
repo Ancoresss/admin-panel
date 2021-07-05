@@ -12,7 +12,7 @@
 <body>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 
-<div class="container">
+<div class="container-fluid">
 <div class="row">
     <div class="col-md-12">
         <div class="d-flex justify-content-end"><a href="/logout" class="btn btn-info">Выйти</a></div>
@@ -48,6 +48,7 @@
                       <th scope="col" class="border-0 text-uppercase font-medium">Адрес</th>
                       <th scope="col" class="border-0 text-uppercase font-medium">Почта</th>
                       <th scope="col" class="border-0 text-uppercase font-medium">Телефон</th>
+                      <th scope="col" class="border-0 text-uppercase font-medium">Документ</th>
                       <th scope="col" class="border-0 text-uppercase font-medium">Управление</th>
                     </tr>
                   </thead>
@@ -65,6 +66,9 @@
                       </td>
                       <td>
                           <span class="text-muted" th:text="${client.getPhone()}"></span>
+                      </td>
+                      <td>
+                          <span class="text-muted" th:text="${client.getFileLink()}"></span>
                       </td>
                       <td>
                           <span class="text-muted"

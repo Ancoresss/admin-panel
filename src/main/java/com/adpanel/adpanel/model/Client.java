@@ -12,11 +12,15 @@ public class Client {
     private String address;
     private String email;
     private String phone;
+    private String fileLink;
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "link_id", referencedColumnName = "id")
     private Link link;
     @Enumerated(value = EnumType.STRING)
     private Status status;
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "fileDB_id", referencedColumnName = "id")
+    private FileDB fileDB;
 
     public Client(int id, String fullName, String address, String email, String phone) {
         this.id = id;
@@ -83,5 +87,21 @@ public class Client {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public FileDB getFileDB() {
+        return fileDB;
+    }
+
+    public void setFileDB(FileDB fileDB) {
+        this.fileDB = fileDB;
+    }
+
+    public String getFileLink() {
+        return fileLink;
+    }
+
+    public void setFileLink(String fileLink) {
+        this.fileLink = fileLink;
     }
 }
