@@ -1,4 +1,4 @@
-package com.adpanel.adpanel.model;
+package com.adpanel.adpanel.model.enums;
 
 public enum Permission {
     DEVELOPERS_READ("developers:read"),

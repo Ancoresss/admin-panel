@@ -1,4 +1,4 @@
-package com.adpanel.adpanel.model;
+package com.adpanel.adpanel.model.enums;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

@@ -2,6 +2,9 @@ package com.adpanel.adpanel.controller;
 
 import com.adpanel.adpanel.logic.LinkGenerator;
 import com.adpanel.adpanel.model.*;
+import com.adpanel.adpanel.model.enums.LinkUsability;
+import com.adpanel.adpanel.model.enums.Role;
+import com.adpanel.adpanel.model.enums.Status;
 import com.adpanel.adpanel.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +36,7 @@ public class MainController {
     private LinkGenerator lg = new LinkGenerator();
 
     private Link generatedLink;
-    private String selectedLink;
+    private Link selectedLink;
     private String editedClientLink;
 
     private String tempFileLink;
@@ -64,11 +67,11 @@ public class MainController {
         } catch (Exception e) {
             link = null;
         }
-        if(link == null) {
-            model.addAttribute("errorMessage", "This link is invalid!");
+        if(link == null || (link.getLinkUsability() == LinkUsability.CLOSE)) {
+            model.addAttribute("errorMessage", "Вы перейшли по невалидной ссылке");
             return "error-page";
         } else {
-            selectedLink = formLink;
+            selectedLink = new Link(formLink);
             model.addAttribute("client", new Client());
             return "form";
         }
@@ -77,6 +80,7 @@ public class MainController {
     @PreAuthorize("hasAuthority('developers:generate:link')")
     public String linkGenerator() {
         generatedLink = new Link(lg.generateLink());
+        generatedLink.setLinkUsability(LinkUsability.OPEN);
         linkService.addLink(generatedLink);
         return "redirect:/";
     }
@@ -116,11 +120,10 @@ public class MainController {
     }
     @PostMapping("/new-client")
     public String newClient(@RequestParam(value = "file", required = false) MultipartFile file, @ModelAttribute("client") Client client) throws IOException {
-        client.setLink(linkService.getLink(selectedLink));
+        Link tempCurrentLink = linkService.getLink(selectedLink.getLink());
+        client.setLink(tempCurrentLink);
+        tempCurrentLink.setLinkUsability(LinkUsability.CLOSE);
         client.setStatus(Status.PENDING);
-
-        System.out.println(file.isEmpty());
-        System.out.println(file == null);
 
         if(!(file.isEmpty())) {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -151,7 +154,7 @@ public class MainController {
     public String newUser(@RequestParam(required = false) Optional<String> isSubAdmin, @ModelAttribute("newUser") User user, Model model) {
         Optional<User> userCheck = userService.getUser(user.getName());
         if(userCheck.isPresent()) {
-            model.addAttribute("errorMessage", "User already exist!");
+            model.addAttribute("errorMessage", "Такой пользователь уже существует");
             return "error-page";
         } else {
             if(isSubAdmin.isPresent()) {

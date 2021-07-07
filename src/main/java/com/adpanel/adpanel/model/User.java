@@ -1,7 +1,8 @@
 package com.adpanel.adpanel.model;
 
+import com.adpanel.adpanel.model.enums.Role;
+
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @Table(name = "users")

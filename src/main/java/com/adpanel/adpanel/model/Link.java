@@ -1,5 +1,7 @@
 package com.adpanel.adpanel.model;
 
+import com.adpanel.adpanel.model.enums.LinkUsability;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,6 +12,8 @@ public class Link {
     @Column(name = "id")
     private long id;
     private String link;
+    @Enumerated(value = EnumType.STRING)
+    private LinkUsability linkUsability;
     @OneToOne(mappedBy = "link")
     private Client client;
 
@@ -34,5 +38,13 @@ public class Link {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public LinkUsability getLinkUsability() {
+        return linkUsability;
+    }
+
+    public void setLinkUsability(LinkUsability linkUsability) {
+        this.linkUsability = linkUsability;
     }
 }

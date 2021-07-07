@@ -1,5 +1,7 @@
 package com.adpanel.adpanel.model;
 
+import com.adpanel.adpanel.model.enums.Status;
+
 import javax.persistence.*;
 
 @Entity

@@ -1,4 +1,4 @@
-package com.adpanel.adpanel.model;
+package com.adpanel.adpanel.model.enums;
 
 public enum Status {
     PENDING("В ожидании"),
